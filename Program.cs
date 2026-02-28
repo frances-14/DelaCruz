@@ -1,45 +1,66 @@
-﻿namespace DelaCruz
+﻿using System;
+
+namespace DelaCruz
 {
     internal class Program
     {
         static void Main(string[] args)
         {
 
+            string[] originLocation = { "MANILA", "BACOLOD", "BOHOL", "BORACAY", "BUTUAN", "CAGAYAN DE ORO", "CALBAYOG", "CAMIGUIN", "CAUAYAN", "CEBU", "CORON", "DAVAO", "DIPOLOG", "ILOILO", "KALIBO", "LAOAG", "LEGAZPI", "MASBATE" };
+            string[] destinationLocation = { "MANILA", "BACOLOD", "BOHOL", "BORACAY", "BUTUAN", "CAGAYAN DE ORO", "CALBAYOG", "CAMIGUIN", "CAUAYAN", "CEBU", "CORON", "DAVAO", "DIPOLOG", "ILOILO", "KALIBO", "LAOAG", "LEGAZPI", "MASBATE" };
 
-            List<String> origin = new List<String>();
+            int originSize = originLocation.Length;
+            int destinationSize = destinationLocation.Length;
 
-            origin.Add("Manila");
-            origin.Add("Manila");
-            origin.Add("Bacolod");
-            origin.Add("Bohol");
-            origin.Add("Boracay");
-            origin.Add("Butuan");
-            origin.Add("Cagayan de Oro");
-            origin.Add("Calbayog");
-            origin.Add("Camiguin");
-            origin.Add("Cauayan");
-
-            List<String> desti = new List<String>();
-
-            desti.Add("Manila");
-            desti.Add("Bacolod");
-            desti.Add("Bohol");
-            desti.Add("Boracay");
-            desti.Add("Butuan");
-            desti.Add("Cagayan de Oro");
-            desti.Add("Calbayog");
-            desti.Add("Camiguin");
-            desti.Add("Cauayan");
+            bool originExist = false;
+            bool destinationExist = false;
 
             Console.WriteLine("Flight Management\n");
 
-            Console.WriteLine("Locations \nManila   |       ");
+            Console.WriteLine("Locations \nManila     |   Bacolod    |    Bohol\n" +
+                                          "Boracay    |   Butuan     |    Cagayan De Oro\n" +
+                                          "Calbayog   |   Camiguin   |    Cauayan\n" +
+                                          "Cebu       |   Coron      |    Davao\n" +
+                                          "Dipolog    |   Iloilo     |    Kalibo\n" +
+                                          "Laoag      |   Legazpi    |    Masbate\n");
 
-            Console.WriteLine("Enter Origin Place: ");
-            string origininput = Console.ReadLine();
+            Console.Write("\nEnter Origin Place: ");
+            string originInput = Console.ReadLine().ToUpper();
 
-            Console.WriteLine("Enter Destination Place: ");
-            string destiInput = Console.ReadLine();
+            Console.Write("Enter Destination Place: ");
+            string destiInput = Console.ReadLine().ToUpper();
+
+            foreach (string origin in originLocation)
+            {
+                if (origin == originInput)
+                {
+                    originExist = true;
+                    break;
+                }
+            }
+
+            foreach (string desti in destinationLocation)
+            {
+                if (desti == destiInput)
+                {
+                    destinationExist = true;
+                    break;
+                }
+            }
+
+            if (originInput == destiInput)
+            {
+                Console.WriteLine("\nThe Flight does not Exist.");
+            }
+            else if (originExist && destinationExist)
+            {
+                Console.WriteLine("\nThe Flight from " + originInput + " to " + destiInput + " is Available.");
+            }
+            else
+            {
+                Console.WriteLine("\nThe Flight does not Exist");
+            }
         }
     }
 }
