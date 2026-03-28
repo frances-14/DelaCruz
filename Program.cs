@@ -1,4 +1,7 @@
-﻿using System;
+﻿using BusinessLayer;
+using ModelLayer;
+using DataLayer;
+using System;
 
 namespace DelaCruz
 {
@@ -6,26 +9,66 @@ namespace DelaCruz
     {
         static void Main(string[] args)
         {
-            business bl = new business();
-            menu();
+            FlightAppService service = new FlightAppService(new JsonFlightData());
+            //menu();
 
-            string repeat = "";
-            while (repeat != "N")
+            string choice = "";
+
+            while (choice != "4")
             {
-                Console.Write("\nEnter Origin Place: ");
-                string originInput = Console.ReadLine().ToUpper();
+                Console.WriteLine("\nFlight Management");
+                Console.WriteLine("1. Add a Flight");
+                Console.WriteLine("2. View Booked Flights");
+                Console.WriteLine("3. Delete a Flight");
+                Console.WriteLine("4. Exit the Program");
 
-                Console.Write("Enter Destination Place: ");
-                string destiInput = Console.ReadLine().ToUpper();
+                Console.Write("Please select a number from the menu: ");
+                choice = Console.ReadLine();
 
-                bl.searchFlight(originInput, destiInput);
+                switch (choice)
+                {
+                    case "1":
+                        Console.Write("Enter Origin: ");
+                        string origin = Console.ReadLine().ToUpper();
 
-                Console.Write("\nWould you like to search again? (Y/N): ");
-                repeat = Console.ReadLine().ToUpper();
+                        Console.Write("Enter Destination: ");
+                        string destination = Console.ReadLine().ToUpper();
 
+                        service.AddFlight(new Flight
+                        {
+                            FlightId = Guid.NewGuid(),
+                            Origin = origin,
+                            Destination = destination
+                        });
+
+                        break;
+
+                    case "2":
+                        var flights = service.GetFlights();
+
+                        for (int i = 0; i < flights.Count; i++)
+                        {
+                            Console.WriteLine($"{i}. {flights[i].Origin} to {flights[i].Destination}");
+                        }
+
+                        break;
+
+                    case "3":
+                        flights = service.GetFlights();
+
+                        for (int i = 0; i < flights.Count; i++)
+                        {
+                            Console.WriteLine($"{i}. {flights[i].Origin} → {flights[i].Destination}");
+                        }
+
+                        Console.Write("Enter index: ");
+                        int index = int.Parse(Console.ReadLine());
+
+                        service.DeleteFlight(index);
+
+                        break;
+                }
             }
-
-            Console.WriteLine("You have exited the program.");
 
         }
 
@@ -42,107 +85,5 @@ namespace DelaCruz
         }
     }
 
-    class business
-    {
-        dataLogic data = new dataLogic();
-
-        public void searchFlight(string originInput, string destiInput)
-        {
-            modelLayer model = new modelLayer(originInput, destiInput);
-
-            bool originExist = false;
-            bool destinationExist = false;
-
-            if (originInput == destiInput)
-            {
-                Console.WriteLine("\nInvalid Input. You cannot have the same Origin and Destination.");
-                return;
-            }
-
-            string[] locations = data.getLocations();
-
-            foreach (string location in locations)
-            {
-                if (location == originInput)
-                {
-                    originExist = true;
-                    break;
-                }
-            }
-
-            foreach (string location in locations)
-            {
-                if (location == destiInput)
-                {
-                    destinationExist = true;
-                    break;
-                }
-            }
-            flightExists(model, originExist, destinationExist);
-
-        }
-
-        public void flightExists(modelLayer model, bool originExist, bool destinationExist)
-        {
-
-            string repeat = "";
-            while (repeat != "N")
-            {
-                if (originExist && destinationExist)
-                {
-                    Console.WriteLine("\nThe Flight from " + model.origin + " to " + model.destination + " is Available.");
-                    Console.WriteLine("Would you like to book this flight? (Y/N)");
-                    string bookFlight = Console.ReadLine().ToUpper();
-
-                    if (bookFlight == "Y")
-                    {
-                        Console.WriteLine("You have successfully booked the flight from " + model.origin + " to " + model.destination + ".");
-                    }
-                    else if (bookFlight == "N")
-                    {
-                        Console.WriteLine("No flight was booked.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Invalid Input. Please enter Y or N.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("\nThe Flight does not Exist");
-
-                }
-
-
-            }
-
-
-
-        }
-
-    }
-
-    class dataLogic
-    {
-
-        public string[] Locations = { "MANILA", "BACOLOD", "BOHOL", "BORACAY", "BUTUAN", "CAGAYAN DE ORO", "CALBAYOG", "CAMIGUIN", "CAUAYAN", "CEBU", "CORON", "DAVAO", "DIPOLOG", "ILOILO", "KALIBO", "LAOAG", "LEGAZPI", "MASBATE" };
-
-
-        public string[] getLocations()
-        {
-            return Locations;
-        }
-    }
-
-    class modelLayer
-    {
-        public string origin;
-        public string destination;
-
-        public modelLayer(string orig, string desti)
-        {
-            origin = orig;
-            destination = desti;
-        }
-    }
+   
 }
