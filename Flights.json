@@ -1,0 +1,17 @@
+[
+  {
+    "FlightId": "a22934b3-4d7a-4b35-be1f-605174e74f38",
+    "Origin": "DAVAO",
+    "Destination": "ILOILO"
+  },
+  {
+    "FlightId": "ff66f251-5f8b-43dc-bec1-f8b31f351490",
+    "Origin": "MANILA",
+    "Destination": "BACOLOD"
+  }
+]
+    "FlightId": "ff66f251-5f8b-43dc-bec1-f8b31f351490",
+    "Origin": "MANILA",
+    "Destination": "BACOLOD"
+  }
+]
