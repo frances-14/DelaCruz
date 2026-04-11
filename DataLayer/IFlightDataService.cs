@@ -10,9 +10,10 @@ namespace DataLayer
     public  interface IFlightDataService
 
     {
-            void Add(Flight flight);
-            List<Flight> GetFlights();
-            void Delete(int index);
-        
+        void Add(Flight flight);
+        List<Flight> GetFlights();
+        void Delete(int index);
+        void Update(int index, string newOrigin, string newDestination);
+        string[] GetLocations();
     }
 }

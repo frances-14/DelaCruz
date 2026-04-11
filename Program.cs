@@ -10,20 +10,29 @@ namespace DelaCruz
         static void Main(string[] args)
         {
             FlightAppService service = new FlightAppService(new JsonFlightData());
+            Business business = new Business(service);
             //menu();
+
 
             string choice = "";
 
-            while (choice != "4")
+            while (choice != "7")
             {
-                Console.WriteLine("\nFlight Management");
-                Console.WriteLine("1. Add a Flight");
-                Console.WriteLine("2. View Booked Flights");
-                Console.WriteLine("3. Delete a Flight");
-                Console.WriteLine("4. Exit the Program");
+                Console.WriteLine("\n======================================================");
+                Console.WriteLine("                Flight Management");
+                Console.WriteLine("====================================================== \n");
+                Console.WriteLine("Hello User! What would you like to do? ");
+                Console.WriteLine("1. Add Flight");
+                Console.WriteLine("2. Delete Flight");
+                Console.WriteLine("3. Update Flight");
+                Console.WriteLine("4. Search Flight");
+                Console.WriteLine("5. View Flights");
+                Console.WriteLine("6. View Locations");
+                Console.WriteLine("7. Exit the Program");
 
-                Console.Write("Please select a number from the menu: ");
+                Console.Write("\nChoose a number from the menu to proceed: ");
                 choice = Console.ReadLine();
+                Console.WriteLine();
 
                 switch (choice)
                 {
@@ -34,12 +43,7 @@ namespace DelaCruz
                         Console.Write("Enter Destination: ");
                         string destination = Console.ReadLine().ToUpper();
 
-                        service.AddFlight(new Flight
-                        {
-                            FlightId = Guid.NewGuid(),
-                            Origin = origin,
-                            Destination = destination
-                        });
+                        business.AddFlight(origin, destination);
 
                         break;
 
@@ -51,6 +55,11 @@ namespace DelaCruz
                             Console.WriteLine($"{i}. {flights[i].Origin} to {flights[i].Destination}");
                         }
 
+                        Console.Write("Enter index: ");
+                        int index = int.Parse(Console.ReadLine());
+
+                        business.DeleteFlight(index, flights.Count);
+
                         break;
 
                     case "3":
@@ -58,15 +67,49 @@ namespace DelaCruz
 
                         for (int i = 0; i < flights.Count; i++)
                         {
-                            Console.WriteLine($"{i}. {flights[i].Origin} → {flights[i].Destination}");
+                            Console.WriteLine($"{i}. {flights[i].Origin} to {flights[i].Destination}");
                         }
 
-                        Console.Write("Enter index: ");
-                        int index = int.Parse(Console.ReadLine());
+                        Console.Write("Enter index to update flight: ");
+                        int updateIndex = int.Parse(Console.ReadLine());
 
-                        service.DeleteFlight(index);
+                        Console.Write("Enter New Origin: ");
+                        string newOrigin = Console.ReadLine().ToUpper();
+
+                        Console.Write("Enter New Destination: ");
+                        string newDestination = Console.ReadLine().ToUpper();
+
+                        business.UpdateFlight(updateIndex, newOrigin, newDestination);
+
+                        Console.WriteLine("Flight updated successfully.");
 
                         break;
+
+                    case "4":
+                        Console.Write("Search Origin: ");
+                        string sOrigin = Console.ReadLine().ToUpper();
+
+                        Console.Write("Search Destination: ");
+                        string sDestination = Console.ReadLine().ToUpper();
+
+                        business.SearchFlight(sOrigin, sDestination);
+
+                        break;
+
+                    case "5":
+                         flights = service.GetFlights();
+
+                        foreach (var f in flights)
+                        {
+                            Console.WriteLine($"{f.Origin} to {f.Destination}");
+                        }
+
+                        break;
+
+                    case "6":
+                        menu();
+                        break;
+
                 }
             }
 
@@ -74,14 +117,24 @@ namespace DelaCruz
 
         static void menu()
         {
-            Console.WriteLine("Flight Management\n");
+            Console.WriteLine("Flight Management");
+            Console.WriteLine("                                      Locations                                          ");
+            Console.WriteLine("-----------------------------------------------------------------------------------------");
+            Console.WriteLine(          "           Manila           |        Bacolod         |         Bohol\n" +
+                                         "           Boracay          |        Butuan          |         Cagayan De Oro\n" +
+                                         "           Calbayog         |        Camiguin        |         Cauayan\n" +
+                                         "           Cebu             |        Clark           |        Coron\n" +
+                                         "           Cotabato         |        Davao           |        Dipolog\n" +
+                                         "           Dumaguete        |        Iloilo          |        General Santos\n" +
+                                         "           Kalibo           |        Laoag           |        Legazpi\n" +
+                                         "           Masbate          |        Naga            |        Ozamiz\n" +
+                                         "           Pagadian         |        Puerto Princesa |        Roxas\n" +
+                                         "           San Jose         |        Siargao         |        Surigao\n" +
+                                         "           Tacloban         |        Tawi-Tawi       |        Tuguegarao\n" +
+                                         "           Virac            |        Zamboanga       |");
 
-            Console.WriteLine("Locations \nManila     |   Bacolod    |    Bohol\n" +
-                                          "Boracay    |   Butuan     |    Cagayan De Oro\n" +
-                                          "Calbayog   |   Camiguin   |    Cauayan\n" +
-                                          "Cebu       |   Coron      |    Davao\n" +
-                                          "Dipolog    |   Iloilo     |    Kalibo\n" +
-                                          "Laoag      |   Legazpi    |    Masbate\n");
+            Console.WriteLine("-----------------------------------------------------------------------------------------");
+            Console.WriteLine("\n  ");
         }
     }
 

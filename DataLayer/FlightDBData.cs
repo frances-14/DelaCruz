@@ -33,11 +33,12 @@ namespace DataLayer
             sqlConnection.Open();
             command.ExecuteNonQuery();
             sqlConnection.Close();
+
         }
 
         public List<Flight> GetFlights()
         {
-            string selectStatement = "SELECT FlightId, Origin, Destination FROM Flights";
+            string selectStatement = "SELECT FlightId,Origin, Destination FROM Flights";
 
             SqlCommand command = new SqlCommand(selectStatement, sqlConnection);
 
@@ -80,6 +81,33 @@ namespace DataLayer
                 command.ExecuteNonQuery();
                 sqlConnection.Close();
             }
+        }
+
+        public void Update(int index, string newOrigin, string newDestination)
+        {
+            var flights = GetFlights();
+
+            if (index >= 0 && index < flights.Count)
+            {
+                var flight = flights[index];
+                string updateStatement = "UPDATE Flights SET Origin = @Origin, Destination = @Destination WHERE FlightId = @FlightId";
+
+                SqlCommand command = new SqlCommand(updateStatement, sqlConnection);
+                command.Parameters.AddWithValue("@Origin",newOrigin);
+                command.Parameters.AddWithValue("@Destination" , newDestination);
+                command.Parameters.AddWithValue("@FlightId",  flight.FlightId);
+
+                sqlConnection.Open();
+                command.ExecuteNonQuery();
+                sqlConnection.Close();
+            }
+        }
+
+        public string[] GetLocations()
+        {
+            return new string[]{"MANILA", "BACOLOD", "BOHOL", "BORACAY", "BUTUAN", "CAGAYAN DE ORO", "CALBAYOG", "CAMIGUIN", "CAUAYAN", "CEBU", "CLARK", "CORON", "COTABATO", "DAVAO", "DIPOLOG", "DUMAGUETE", "ILOILO",
+             "GENERAL SANTOS", "KALIBO", "LAOAG", "LEGAZPI", "MASBATE", "NAGA", "OZAMIZ", "PAGADIAN", "PUERTO PRINCESA", "ROXAS", "SAN JOSE", "SIARGAO", "SURIGAO", "TACLOBAN", "TAWI-TAWI", "TUGUEGARAO", "VIRAC", "ZAMBOANGA"
+            };
         }
     }
 }

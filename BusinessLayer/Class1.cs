@@ -1,92 +1,101 @@
-﻿using System.Reflection;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using ModelLayer;
+﻿using ModelLayer;
 using DataLayer;
 
 namespace BusinessLayer
 {
     public class Business
     {
-        DataLayer.DataLayer data = new DataLayer.DataLayer();
+        private FlightAppService Service;
 
-        public void searchFlight(string originInput, string destiInput)
+        public Business(FlightAppService service)
         {
-            Model model = new Model(originInput, destiInput);
+            Service = service;
+        }
 
-            bool originExist = false;
-            bool destinationExist = false;
-
-            if (originInput == destiInput)
+        public void AddFlight(string originInput, string destinationInput)
+        {
+            if (originInput == destinationInput)
             {
-                Console.WriteLine("\nInvalid Input. You cannot have the same Origin and Destination.");
+                Console.WriteLine("Invalid Input. Origin and Destination cannot be the same.");
                 return;
             }
 
-            string[] locations = data.getLocations();
+            string[] locations = Service.GetLocations();
+
+            bool originExists = false;
+            bool destinationExists = false;
 
             foreach (string location in locations)
             {
                 if (location == originInput)
-                {
-                    originExist = true;
-                    break;
-                }
+                    originExists = true;
+
+                if (location == destinationInput)
+                    destinationExists = true;
             }
 
-            foreach (string location in locations)
+            if (!originExists)
             {
-                if (location == destiInput)
-                {
-                    destinationExist = true;
-                    break;
-                }
+                Console.WriteLine("Invalid Origin. Please check the available locations.");
+                return;
             }
-            flightExists(model, originExist, destinationExist);
 
+            if (!destinationExists)
+            {
+                Console.WriteLine("Invalid Destination. Please check the available locations.");
+                return;
+            }
+
+            Flight flight = new Flight
+            {
+                FlightId = Guid.NewGuid(),
+                Origin = originInput,
+                Destination = destinationInput
+            };
+
+            Service.AddFlight(flight);
+
+            Console.WriteLine("Flight added successfully.");
         }
 
-        public void flightExists(Model model, bool originExist, bool destinationExist)
+        public void SearchFlight(string originInput, string destinationInput)
         {
+            var flights = Service.GetFlights();
 
-                if (originExist && destinationExist)
+            bool found = false;
+
+            foreach (var flight in flights)
+            {
+                if (flight.Origin == originInput && flight.Destination == destinationInput)
                 {
-                    Console.WriteLine("\nThe Flight from " + model.origin + " to " + model.destination + " is Available.");
-                    Console.WriteLine("Would you like to book this flight? (Y/N)");
-                    string bookFlight = Console.ReadLine().ToUpper();
-
-                    if (bookFlight == "Y")
-                    {
-                    FlightAppService service = new FlightAppService(new JsonFlightData());
-
-                    service.AddFlight(new Flight
-                    {
-                        FlightId = Guid.NewGuid(),
-                        Origin = model.origin,
-                        Destination = model.destination
-                    });
-                    Console.WriteLine("You have successfully booked the flight from " + model.origin + " to " + model.destination + ".");
-                        
-                    }
-
-                    if (bookFlight == "N")
-                    {
-                        Console.WriteLine("No flight was booked.");
-                        return;
+                    Console.WriteLine($"Flight found: {flight.Origin} to {flight.Destination}");
+                    found = true;
                 }
-
-                    if (bookFlight != "N" && bookFlight != "Y")
-                {
-                        Console.WriteLine("Invalid Input. Please enter Y or N.");
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("\nThe Flight does not Exist");
-
-                }
-
-
             }
+
+            if (!found)
+            {
+                Console.WriteLine("No matching flight found.");
+            }
+        }
+
+        public void UpdateFlight(int index, string newOrigin, string newDestination)
+        {
+            Service.UpdateFlight(index, newOrigin, newDestination);
+            Console.WriteLine("Flight updated.");
+        }
+
+        public void DeleteFlight(int index, int totalFlights)
+        {
+            if (index < 0 || index >= totalFlights)
+            {
+                Console.WriteLine("Invalid index.");
+                return;
+            }
+
+            Service.DeleteFlight(index);
+            Console.WriteLine("Flight deleted.");
+        }
 
     }
 }

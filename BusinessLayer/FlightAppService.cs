@@ -31,5 +31,36 @@ namespace BusinessLayer
         {
             flightDataService.Delete(index);
         }
+
+        public void UpdateFlight(int index, string newOrigin, string newDestination)
+        {
+            flightDataService.Update(index, newOrigin, newDestination);
+        }
+
+        public void SearchFlight(string origin, string destination)
+        {
+            var flights = flightDataService.GetFlights();
+
+            var result = flights.Where(f => f.Origin == origin && f.Destination == destination).ToList();
+
+            if (result.Count == 0)
+            {
+                Console.WriteLine("No flights found.");
+            }
+            else
+            {
+                Console.WriteLine("Flights found:");
+                foreach (var f in result)
+                {
+                    Console.WriteLine($"{f.Origin} to {f.Destination}");
+                }
+            }
+        }
+
+        public string[] GetLocations()
+        {
+            return flightDataService.GetLocations();
+        }
+
     }
 }
