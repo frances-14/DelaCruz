@@ -9,7 +9,7 @@ namespace DelaCruz
     {
         static void Main(string[] args)
         {
-            FlightAppService service = new FlightAppService(new JsonFlightData());
+            FlightAppService service = new FlightAppService(new FlightDBData());
             Business business = new Business(service);
             //menu();
 
@@ -74,14 +74,14 @@ namespace DelaCruz
                         int updateIndex = int.Parse(Console.ReadLine());
 
                         Console.Write("Enter New Origin: ");
-                        string newOrigin = Console.ReadLine().ToUpper();
+                        string newOrigin = Console.ReadLine().Trim().ToUpper();
 
                         Console.Write("Enter New Destination: ");
-                        string newDestination = Console.ReadLine().ToUpper();
+                        string newDestination = Console.ReadLine().Trim().ToUpper();
 
                         business.UpdateFlight(updateIndex, newOrigin, newDestination);
 
-                        Console.WriteLine("Flight updated successfully.");
+                        Console.WriteLine(" ");
 
                         break;
 

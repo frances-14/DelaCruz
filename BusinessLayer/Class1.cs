@@ -75,14 +75,56 @@ namespace BusinessLayer
 
             if (!found)
             {
-                Console.WriteLine("No matching flight found.");
+                Console.WriteLine("No matching flight found. Please check the locations available or check for spelling error.");
             }
         }
 
         public void UpdateFlight(int index, string newOrigin, string newDestination)
         {
+
+            var flights = Service.GetFlights();
+
+            if (index < 0 || index >= flights.Count)
+            {
+                Console.WriteLine("Invalid index.");
+                return;
+            }
+
+            if (newOrigin == newDestination)
+            {
+                Console.WriteLine("Invalid Input. Origin and Destination cannot be the same.");
+                return;
+            }
+
+            string[] locations = Service.GetLocations();
+
+            bool originExists = false;
+            bool destinationExists = false;
+
+            foreach (string location in locations)
+            {
+                if (location == newOrigin)
+                    originExists = true;
+
+                if (location == newDestination)
+                    destinationExists = true;
+            }
+        
+
+            if (!originExists)
+            {
+                Console.WriteLine("Invalid Origin. Please check the available locations.");
+                return;
+            }
+
+            if (!destinationExists)
+            {
+                Console.WriteLine("Invalid Destination. Please check the available locations.");
+                return;
+            }
+
             Service.UpdateFlight(index, newOrigin, newDestination);
-            Console.WriteLine("Flight updated.");
+            Console.WriteLine("Flight Updated");
         }
 
         public void DeleteFlight(int index, int totalFlights)
