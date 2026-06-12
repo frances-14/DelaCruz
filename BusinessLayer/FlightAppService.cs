@@ -1,4 +1,5 @@
-﻿using DataLayer;
+﻿
+using DataLayer;
 using ModelLayer;
 using System;
 using System.Collections.Generic;
@@ -27,34 +28,80 @@ namespace BusinessLayer
             return flightDataService.GetFlights() ?? new List<Flight>();
         }
 
+        public Flight GetFlight(Guid id)
+        {
+            var flights = flightDataService.GetFlights();
+
+            foreach (Flight flight in flights)
+            {
+                if (flight.FlightId == id)
+                {
+                    return flight;
+                }
+            }
+
+            return null;
+        }
+
         public void DeleteFlight(int index)
         {
             flightDataService.Delete(index);
         }
+
+        public bool RemoveFlight(Guid id)
+        {
+            var flights = flightDataService.GetFlights();
+
+            for (int i = 0; i < flights.Count; i++)
+            {
+                if (flights[i].FlightId == id)
+                {
+                    flightDataService.Delete(i);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
 
         public void UpdateFlight(int index, string newOrigin, string newDestination)
         {
             flightDataService.Update(index, newOrigin, newDestination);
         }
 
-        public void SearchFlight(string origin, string destination)
+        public bool UpdateFlight(Guid id, string newOrigin, string newDestination)
         {
             var flights = flightDataService.GetFlights();
 
-            var result = flights.Where(f => f.Origin == origin && f.Destination == destination).ToList();
-
-            if (result.Count == 0)
+            for (int i = 0; i < flights.Count; i++)
             {
-                Console.WriteLine("No flights found.");
-            }
-            else
-            {
-                Console.WriteLine("Flights found:");
-                foreach (var f in result)
+                if (flights[i].FlightId == id)
                 {
-                    Console.WriteLine($"{f.Origin} to {f.Destination}");
+                    flightDataService.Update(i, newOrigin, newDestination);
+
+                    return true;
                 }
             }
+
+            return false;
+        }
+
+        public List<Flight> SearchFlight(string origin, string destination)
+        {
+            var flights = flightDataService.GetFlights();
+
+            List<Flight> results = new List<Flight>();
+
+            foreach (Flight flight in flights)
+            {
+                if (flight.Origin == origin &&
+                    flight.Destination == destination)
+                {
+                    results.Add(flight);
+                }
+            }
+            return results;
         }
 
         public string[] GetLocations()

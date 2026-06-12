@@ -12,12 +12,11 @@ namespace BusinessLayer
             Service = service;
         }
 
-        public void AddFlight(string originInput, string destinationInput)
+        public bool AddFlight(string originInput, string destinationInput)
         {
             if (originInput == destinationInput)
             {
-                Console.WriteLine("Invalid Input. Origin and Destination cannot be the same.");
-                return;
+                return false;
             }
 
             string[] locations = Service.GetLocations();
@@ -36,14 +35,12 @@ namespace BusinessLayer
 
             if (!originExists)
             {
-                Console.WriteLine("Invalid Origin. Please check the available locations.");
-                return;
+                return false;
             }
 
             if (!destinationExists)
             {
-                Console.WriteLine("Invalid Destination. Please check the available locations.");
-                return;
+                return false;
             }
 
             Flight flight = new Flight
@@ -54,46 +51,40 @@ namespace BusinessLayer
             };
 
             Service.AddFlight(flight);
-
-            Console.WriteLine("Flight added successfully.");
+            return true;
         }
 
-        public void SearchFlight(string originInput, string destinationInput)
+        public List<Flight> SearchFlight(string originInput, string destinationInput)
         {
             var flights = Service.GetFlights();
 
-            bool found = false;
+            List<Flight> results = new List<Flight>();
 
-            foreach (var flight in flights)
+            foreach (Flight flight in flights)
             {
-                if (flight.Origin == originInput && flight.Destination == destinationInput)
+                if (flight.Origin == originInput &&
+                    flight.Destination == destinationInput)
                 {
-                    Console.WriteLine($"Flight found: {flight.Origin} to {flight.Destination}");
-                    found = true;
+                    results.Add(flight);
                 }
             }
 
-            if (!found)
-            {
-                Console.WriteLine("No matching flight found. Please check the locations available or check for spelling error.");
-            }
+            return results;
         }
 
-        public void UpdateFlight(int index, string newOrigin, string newDestination)
+        public bool UpdateFlight(int index, string newOrigin, string newDestination)
         {
 
             var flights = Service.GetFlights();
 
             if (index < 0 || index >= flights.Count)
             {
-                Console.WriteLine("Invalid index.");
-                return;
+                return false;
             }
 
             if (newOrigin == newDestination)
             {
-                Console.WriteLine("Invalid Input. Origin and Destination cannot be the same.");
-                return;
+                return false;
             }
 
             string[] locations = Service.GetLocations();
@@ -109,34 +100,31 @@ namespace BusinessLayer
                 if (location == newDestination)
                     destinationExists = true;
             }
-        
+
 
             if (!originExists)
             {
-                Console.WriteLine("Invalid Origin. Please check the available locations.");
-                return;
+                return false;
             }
 
             if (!destinationExists)
             {
-                Console.WriteLine("Invalid Destination. Please check the available locations.");
-                return;
+                return false;
             }
 
             Service.UpdateFlight(index, newOrigin, newDestination);
-            Console.WriteLine("Flight Updated");
+            return true;
         }
 
-        public void DeleteFlight(int index, int totalFlights)
+        public bool DeleteFlight(int index, int totalFlights)
         {
             if (index < 0 || index >= totalFlights)
             {
-                Console.WriteLine("Invalid index.");
-                return;
+                return false;
             }
 
             Service.DeleteFlight(index);
-            Console.WriteLine("Flight deleted.");
+            return true;
         }
 
     }
